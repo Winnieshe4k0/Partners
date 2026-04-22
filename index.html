@@ -6,6 +6,8 @@
 <title id="pageTitle">Эберзин А. В. — Партнёры</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
   :root {
     --klein: #002FA7;
@@ -1418,6 +1420,25 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ─── FIREBASE ──────────────────────────────────────────
+firebase.initializeApp({ databaseURL: 'https://partners-b55e4-default-rtdb.europe-west1.firebasedatabase.app' });
+const db = firebase.database();
+let fbReady = false;
+let saveTimeout = null;
+
+function fbSave(path, data) {
+  db.ref(path).set(data).catch(e => console.error('Firebase save error:', e));
+}
+
+function fbSaveDebounced() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    fbSave('partners', partners);
+    fbSave('custom', { types: customTypes, cities: customCities, banks: customBanks });
+    fbSave('colOrder', COLS.map(c => c.key));
+  }, 300);
+}
+
 // ─── DYNAMIC TYPES & CITIES ─────────────────────────────
 const BASE_TYPES = [
   { value:'СК',           label:'СК (Строительная компания)', bg:'rgba(0,47,167,.1)',    color:'#002FA7' },
@@ -1524,6 +1545,7 @@ function saveCustom() {
     localStorage.setItem('custom_cities', JSON.stringify(customCities));
     localStorage.setItem('custom_banks', JSON.stringify(customBanks));
   } catch(e) {}
+  fbSaveDebounced();
 }
 function loadCustom() {
   try {
@@ -1618,6 +1640,7 @@ let sortKey = null, sortDir = 1;
 // ─── STORAGE ────────────────────────────────────────────
 function save() {
   try { localStorage.setItem('partners_v2', JSON.stringify(partners)); } catch(e) {}
+  fbSaveDebounced();
 }
 function load() {
   try {
@@ -2104,6 +2127,7 @@ function colDragEnd() {
 }
 function saveColOrder() {
   try { localStorage.setItem('col_order', JSON.stringify(COLS.map(c => c.key))); } catch(e) {}
+  fbSaveDebounced();
 }
 function loadColOrder() {
   try {
@@ -2242,6 +2266,7 @@ function confirmImport() {
     document.getElementById('logoTitle').textContent = t;
     document.getElementById('pageTitle').textContent = importedFileName + ' — Партнёры';
     try { localStorage.setItem('custom_title', importedFileName); } catch(e) {}
+    fbSave('customTitle', importedFileName);
   }
   closeImportModal();
   populateFilterSelects();
@@ -2439,6 +2464,8 @@ document.getElementById('importOverlay').addEventListener('click', function(e) {
 
 initPwScreen();
 loadTheme();
+
+// Load local first (fast), then override from Firebase
 loadCustom();
 loadColOrder();
 load();
@@ -2447,6 +2474,65 @@ populateFilterSelects();
 populateBankSelect('Нет');
 buildColsPanel();
 renderTable();
+
+// ─── FIREBASE LOAD (override local) ────────────────────
+db.ref('/').once('value').then(snap => {
+  const data = snap.val();
+  if (!data) {
+    // First time — push local data to Firebase
+    fbSave('partners', partners);
+    fbSave('custom', { types: customTypes, cities: customCities, banks: customBanks });
+    fbSave('colOrder', COLS.map(c => c.key));
+    showToast('☁️ Данные загружены в облако');
+    return;
+  }
+
+  let changed = false;
+
+  if (data.partners && Array.isArray(data.partners)) {
+    partners = data.partners;
+    try { localStorage.setItem('partners_v2', JSON.stringify(partners)); } catch(e) {}
+    changed = true;
+  }
+
+  if (data.custom) {
+    if (data.custom.types) { customTypes = data.custom.types; try { localStorage.setItem('custom_types', JSON.stringify(customTypes)); } catch(e) {} }
+    if (data.custom.cities) { customCities = data.custom.cities; try { localStorage.setItem('custom_cities', JSON.stringify(customCities)); } catch(e) {} }
+    if (data.custom.banks) { customBanks = data.custom.banks; try { localStorage.setItem('custom_banks', JSON.stringify(customBanks)); } catch(e) {} }
+    changed = true;
+  }
+
+  if (data.colOrder && Array.isArray(data.colOrder)) {
+    data.colOrder.forEach((key, newIdx) => {
+      const oldIdx = COLS.findIndex(c => c.key === key);
+      if (oldIdx !== -1 && oldIdx !== newIdx) {
+        const [col] = COLS.splice(oldIdx, 1);
+        COLS.splice(newIdx, 0, col);
+      }
+    });
+    try { localStorage.setItem('col_order', JSON.stringify(data.colOrder)); } catch(e) {}
+    changed = true;
+  }
+
+  if (data.customTitle) {
+    document.getElementById('logoTitle').textContent = data.customTitle.toUpperCase() + ' — ПАРТНЁРЫ';
+    document.getElementById('pageTitle').textContent = data.customTitle + ' — Партнёры';
+    try { localStorage.setItem('custom_title', data.customTitle); } catch(e) {}
+  }
+
+  if (changed) {
+    populateFilterSelects();
+    populateBankSelect('Нет');
+    buildColsPanel();
+    renderTable();
+  }
+
+  fbReady = true;
+  showToast('☁️ Синхронизировано');
+}).catch(err => {
+  console.error('Firebase load error:', err);
+  showToast('⚠️ Нет связи с облаком — работаем локально');
+});
 </script>
 </body>
 </html>
