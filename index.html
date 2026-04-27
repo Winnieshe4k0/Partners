@@ -982,6 +982,119 @@
   /* NO COLS hidden by JS */
   [data-col-hidden] { display: none; }
 
+  /* ─── PARTNER CARD ─── */
+  #cardOverlay {
+    position: fixed; inset: 0;
+    background: rgba(0,15,40,.55);
+    backdrop-filter: blur(4px);
+    z-index: 900;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #cardOverlay.open { display: flex; }
+  .card-modal {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .25s ease;
+  }
+  body.dark .card-modal { background: #141928; }
+  .card-header {
+    background: var(--klein);
+    color: white;
+    padding: 20px 24px 16px;
+    border-radius: 16px 16px 0 0;
+  }
+  .card-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .card-company {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .card-header-close {
+    background: rgba(255,255,255,.2);
+    border: none;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+  .card-header-close:hover { background: rgba(255,255,255,.35); }
+  .card-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .card-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 500px) { .card-grid { grid-template-columns: 1fr; } }
+  .card-info-block {
+    background: var(--klein-ghost);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  body.dark .card-info-block { background: #1e2a4a; }
+  .card-info-label {
+    font-size: 10px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .04em;
+    margin-bottom: 4px;
+  }
+  .card-info-value { font-size: 13px; color: var(--text); line-height: 1.5; word-break: break-word; }
+  .card-cred-val {
+    font-family: 'Courier New', monospace; font-size: 13px;
+    color: var(--klein); cursor: pointer;
+    border-bottom: 1px dashed var(--klein); transition: all .15s;
+    display: inline-block;
+  }
+  .card-cred-val:hover { background: var(--klein-pale); border-radius: 3px; padding: 0 3px; }
+  body.dark .card-cred-val { color: #6b9fff; border-color: #6b9fff; }
+  .card-section-title {
+    font-family: 'Unbounded', sans-serif; font-size: 10px; font-weight: 600;
+    color: var(--klein); text-transform: uppercase; letter-spacing: .06em;
+    padding-bottom: 6px; border-bottom: 1.5px solid var(--klein-pale); margin-bottom: 10px;
+  }
+  body.dark .card-section-title { border-color: #2a3250; }
+  .card-textarea {
+    width: 100%; min-height: 80px; padding: 10px 12px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 13px; font-family: 'Inter', sans-serif; line-height: 1.6;
+    color: var(--text); background: var(--surface); resize: vertical; outline: none;
+    transition: border-color .2s;
+  }
+  body.dark .card-textarea { background: #0f1320; color: var(--text); border-color: var(--border); }
+  .card-textarea:focus { border-color: var(--klein); }
+  .card-footer {
+    padding: 14px 24px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px; justify-content: flex-end; align-items: center;
+  }
+  body.dark .card-footer { border-color: var(--border); }
+  .card-overdue-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(229,62,62,.1); color: #c53030;
+    border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 500; flex: 1;
+  }
+  @media (max-width: 768px) {
+    #cardOverlay { padding: 0; align-items: flex-end; }
+    .card-modal { max-width: 100%; max-height: 95vh; border-radius: 16px 16px 0 0; }
+    .card-body { padding: 16px; }
+    .card-header { padding: 16px; }
+    .card-footer { padding: 12px 16px; }
+  }
+
   /* ─── CUSTOM ITEMS MANAGER ─── */
   .custom-manage-wrap { position: relative; display: inline-block; }
   .custom-manage-btn {
@@ -1417,6 +1530,57 @@
   </div>
 </div>
 
+<!-- PARTNER CARD -->
+<div id="cardOverlay">
+  <div class="card-modal">
+    <div class="card-header">
+      <div class="card-header-top">
+        <div>
+          <div class="card-company" id="cardCompany"></div>
+          <div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,.7)" id="cardLpr"></div>
+        </div>
+        <button class="card-header-close" onclick="closeCard()">×</button>
+      </div>
+      <div class="card-meta" id="cardMeta"></div>
+    </div>
+    <div class="card-body">
+
+      <!-- Контакты -->
+      <div>
+        <div class="card-section-title">📞 Контакты</div>
+        <div class="card-grid" id="cardContacts"></div>
+      </div>
+
+      <!-- Личный кабинет -->
+      <div id="cardLkSection">
+        <div class="card-section-title">🔑 Личный кабинет</div>
+        <div class="card-grid" id="cardLk"></div>
+      </div>
+
+      <!-- О партнёре -->
+      <div>
+        <div class="card-section-title">🏢 О партнёре</div>
+        <textarea class="card-textarea" id="cardAbout" placeholder="Краткое описание партнёра, особенности работы..." rows="3"></textarea>
+      </div>
+
+      <!-- Последние договорённости -->
+      <div>
+        <div class="card-section-title">💬 Последние договорённости</div>
+        <textarea class="card-textarea" id="cardNotes" rows="4"></textarea>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <div class="card-overdue-badge" id="cardOverdueBadge" style="display:none">
+        ❗ Контакт более месяца назад
+      </div>
+      <button class="btn-cancel" onclick="closeCard()">Закрыть</button>
+      <button class="btn-save" onclick="saveCardNotes()">Сохранить</button>
+      <button class="btn-save" style="background:var(--text-muted)" onclick="openEditFromCard()">✏️ Редактировать</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1582,7 +1746,7 @@ function formatPhoneDisplay(raw) {
 // ─── DATA ───────────────────────────────────────────────
 const COLS = [
   { key: 'status',      label: 'Статус',         short: 'Статус',    visible: true },
-  { key: 'date',        label: 'Дата',          short: 'Дата',      visible: true },
+  { key: 'date',        label: 'Дата',          short: 'Дата',      visible: false },
   { key: 'company',     label: 'Компания',       short: 'Компания',  visible: true },
   { key: 'type',        label: 'Тип',            short: 'Тип',       visible: true },
   { key: 'city',        label: 'Город',          short: 'Город',     visible: true },
@@ -1708,6 +1872,19 @@ function dateHtml(d) {
   if (parts.length === 3) return `<span class="date-cell">${parts[2]}.${parts[1]}.${parts[0].slice(2)}</span>`;
   return d;
 }
+function lastContactHtml(d) {
+  if (!d || d === '-') return '<span style="color:#ccc">—</span>';
+  const parts = d.split('-');
+  const formatted = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0].slice(2)}` : d;
+  const date = new Date(d);
+  const now = new Date();
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  const overdue = !isNaN(date) && diffDays > 30;
+  const icon = overdue
+    ? `<span title="Контакт более месяца назад (${diffDays} дн.)" style="color:#e53e3e;font-size:13px;margin-left:4px;cursor:default">❗</span>`
+    : '';
+  return `<span class="date-cell">${formatted}${icon}</span>`;
+}
 function phoneHtml(raw) {
   if (!raw || raw === '-') return '—';
   const disp = formatPhoneDisplay(raw);
@@ -1767,7 +1944,7 @@ function renderTable() {
     document.getElementById('emptyState').style.display = 'none';
     document.getElementById('partnersTable').style.display = '';
     tbody.innerHTML = rows.map(p => {
-      return `<tr data-id="${p.id}" data-type="${p.type||''}" ondblclick="openEditModal(${p.id})">
+      return `<tr data-id="${p.id}" data-type="${p.type||''}" ondblclick="openCard(${p.id})" oncontextmenu="rowContextMenu(event,${p.id})">
         ${visCols.map(c => renderCell(p, c)).join('')}
       </tr>`;
     }).join('');
@@ -1812,7 +1989,7 @@ function renderCell(p, col) {
     case 'pass': return `<td class="compact">${credHtml(v, v)}</td>`;
     case 'site': return `<td>${siteHtml(v)}</td>`;
     case 'date': return `<td>${dateHtml(v)}</td>`;
-    case 'lastcontact': return `<td>${dateHtml(v)}</td>`;
+    case 'lastcontact': return `<td>${lastContactHtml(v)}</td>`;
     case 'notes': return `<td><div class="notes-cell" title="${(v||'').replace(/"/g,'&quot;')}">${v||'—'}</div></td>`;
     case 'phone': return `<td>${phoneHtml(v)}</td>`;
     case 'email': {
@@ -2445,17 +2622,175 @@ function contactsToDisplayString(contacts) {
   }).join('');
 }
 
+// ─── PARTNER CARD ──────────────────────────────────────
+let cardEditingId = null;
+
+function openCard(id) {
+  const p = partners.find(x => x.id === id);
+  if (!p) return;
+  cardEditingId = id;
+
+  // Header
+  document.getElementById('cardCompany').textContent = p.company || '—';
+  document.getElementById('cardLpr').textContent = p.lpr && p.lpr !== '-' ? '👤 ' + p.lpr : '';
+
+  // Meta badges
+  const typeInfo = allTypes().find(t => t.value === p.type);
+  const typeBadgeHtml = typeInfo
+    ? `<span class="badge" style="background:${typeInfo.bg};color:${typeInfo.color}">${p.type}</span>`
+    : (p.type ? `<span class="badge">${p.type}</span>` : '');
+  const cityInfo = allCities().find(c => c.value === p.city);
+  const cityBadgeHtml = p.city
+    ? `<span class="badge" style="background:rgba(255,255,255,.15);color:white">${p.city}</span>`
+    : '';
+  const isActive = !p.status || p.status === 'active';
+  const statusBadgeHtml = `<span class="badge" style="background:${isActive ? 'rgba(0,255,150,.2)' : 'rgba(255,80,50,.2)'};color:${isActive ? '#6dffbb' : '#ffaa99'}">${isActive ? 'Активный' : 'Неактивный'}</span>`;
+  document.getElementById('cardMeta').innerHTML = statusBadgeHtml + typeBadgeHtml + cityBadgeHtml;
+
+  // Contacts grid
+  const contacts = p.contacts || parseLegacyEmail(p.email);
+  const contactsHtml = [];
+
+  if (p.phone && p.phone !== '-') {
+    const lines = p.phone.split('\n').filter(l => l.trim());
+    contactsHtml.push(`<div class="card-info-block">
+      <div class="card-info-label">📞 Телефон</div>
+      <div class="card-info-value">${lines.join('<br>')}</div>
+    </div>`);
+  }
+
+  if (contacts.length) {
+    const msgHtml = contacts.map(c => {
+      const cfg = MSG_CONFIG[c.type];
+      return `<span style="display:flex;align-items:center;gap:6px;margin-bottom:3px">${cfg ? cfg.cellIcon : ''} ${c.value}</span>`;
+    }).join('');
+    contactsHtml.push(`<div class="card-info-block">
+      <div class="card-info-label">💬 Каналы связи</div>
+      <div class="card-info-value">${msgHtml}</div>
+    </div>`);
+  }
+
+  if (p.site && p.site !== '-') {
+    const url = p.site.startsWith('http') ? p.site : 'https://' + p.site;
+    contactsHtml.push(`<div class="card-info-block">
+      <div class="card-info-label">🌐 Сайт</div>
+      <div class="card-info-value"><a href="${url}" target="_blank" class="site-link">${p.site.replace(/^https?:\/\//,'')}</a></div>
+    </div>`);
+  }
+
+  if (p.dedicated && p.dedicated !== '-') {
+    contactsHtml.push(`<div class="card-info-block">
+      <div class="card-info-label">📲 Выделенный номер</div>
+      <div class="card-info-value">${p.dedicated}</div>
+    </div>`);
+  }
+
+  // Dates
+  const lc = p.lastcontact;
+  const lcFormatted = lc && lc !== '-' ? lc.split('-').reverse().join('.').replace(/^\d{2}\./, d => d) : '—';
+  const lcFull = lc && lc !== '-' ? (() => { const pts = lc.split('-'); return `${pts[2]}.${pts[1]}.${pts[0].slice(2)}`; })() : '—';
+  contactsHtml.push(`<div class="card-info-block">
+    <div class="card-info-label">📅 Последний контакт</div>
+    <div class="card-info-value">${lcFull}</div>
+  </div>`);
+
+  document.getElementById('cardContacts').innerHTML = contactsHtml.join('');
+
+  // LK section
+  const hasLk = p.login && p.login !== '-';
+  const lkSection = document.getElementById('cardLkSection');
+  if (hasLk) {
+    lkSection.style.display = '';
+    document.getElementById('cardLk').innerHTML = `
+      <div class="card-info-block">
+        <div class="card-info-label">🔑 Логин</div>
+        <div class="card-info-value">
+          <span class="card-cred-val" onclick="copyCred(this,'${p.login}')" title="Нажмите, чтобы скопировать">${p.login}</span>
+        </div>
+      </div>
+      <div class="card-info-block">
+        <div class="card-info-label">🔒 Пароль</div>
+        <div class="card-info-value">
+          <span class="card-cred-val" onclick="copyCred(this,'${p.pass}')" title="Нажмите, чтобы скопировать">${p.pass}</span>
+        </div>
+      </div>`;
+  } else {
+    lkSection.style.display = 'none';
+  }
+
+  // About & Notes
+  document.getElementById('cardAbout').value = p.about || '';
+  document.getElementById('cardNotes').value = p.notes || '';
+
+  // Overdue badge
+  const overdueEl = document.getElementById('cardOverdueBadge');
+  if (lc && lc !== '-') {
+    const diffDays = Math.floor((new Date() - new Date(lc)) / (1000*60*60*24));
+    if (diffDays > 30) {
+      overdueEl.style.display = 'flex';
+      overdueEl.textContent = `❗ Контакт ${diffDays} дней назад`;
+    } else {
+      overdueEl.style.display = 'none';
+    }
+  } else {
+    overdueEl.style.display = 'none';
+  }
+
+  document.getElementById('cardOverlay').classList.add('open');
+}
+
+function openEditFromCard() {
+  const id = cardEditingId;
+  closeCard();
+  setTimeout(() => openEditModal(id), 50);
+}
+
+function closeCard() {
+  document.getElementById('cardOverlay').classList.remove('open');
+  cardEditingId = null;
+}
+
+// Double right-click to open editor
+let lastRmbTime = 0;
+let lastRmbId = null;
+function rowContextMenu(e, id) {
+  e.preventDefault();
+  const now = Date.now();
+  if (lastRmbId === id && now - lastRmbTime < 500) {
+    openEditModal(id);
+    lastRmbTime = 0; lastRmbId = null;
+  } else {
+    lastRmbTime = now;
+    lastRmbId = id;
+  }
+}
+
+function saveCardNotes() {
+  if (!cardEditingId) return;
+  const idx = partners.findIndex(p => p.id === cardEditingId);
+  if (idx === -1) return;
+  partners[idx].about = document.getElementById('cardAbout').value.trim();
+  partners[idx].notes = document.getElementById('cardNotes').value.trim();
+  save();
+  renderTable();
+  showToast('✅ Сохранено');
+}
+
 // ─── HOTKEYS ───────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     if (document.getElementById('confirmOverlay').classList.contains('open')) { confirmNo(); return; }
     if (document.getElementById('importOverlay').classList.contains('open')) { closeImportModal(); return; }
+    if (document.getElementById('cardOverlay').classList.contains('open')) { closeCard(); return; }
     if (document.getElementById('modalOverlay').classList.contains('open')) { closeModal(); return; }
     if (document.getElementById('fileDropdown').classList.contains('open')) { closeFileDropdown(); return; }
   }
 });
 
 // ─── INIT ───────────────────────────────────────────────
+document.getElementById('cardOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeCard();
+});
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
