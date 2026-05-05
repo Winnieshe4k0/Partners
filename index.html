@@ -1087,6 +1087,25 @@
     background: rgba(229,62,62,.1); color: #c53030;
     border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 500; flex: 1;
   }
+  .card-comment-item {
+    background: var(--klein-ghost);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--klein);
+  }
+  body.dark .card-comment-item { background: #1e2a4a; border-color: var(--klein-light); }
+  .card-comment-date {
+    font-size: 10px; font-weight: 600; color: var(--klein);
+    text-transform: uppercase; letter-spacing: .03em; margin-bottom: 4px;
+  }
+  body.dark .card-comment-date { color: #6b9fff; }
+  .card-comment-text { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line; }
+  .card-comment-del {
+    float: right; background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 14px; padding: 0 2px; border-radius: 4px;
+    transition: all .15s; line-height: 1;
+  }
+  .card-comment-del:hover { color: var(--accent); background: rgba(255,58,31,.1); }
   @media (max-width: 768px) {
     #cardOverlay { padding: 0; align-items: flex-end; }
     .card-modal { max-width: 100%; max-height: 95vh; border-radius: 16px 16px 0 0; }
@@ -1200,6 +1219,175 @@
   .btn-import-confirm{padding:10px 24px;background:var(--success);color:#fff;border:none;border-radius:8px;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;display:none}
   .btn-import-confirm.visible{display:inline-block}
   .btn-import-confirm:hover{background:#009a66;transform:translateY(-1px)}
+
+  /* ─── KPI TAB ─── */
+  #kpiView { display:none; }
+  #partnersView { display:block; }
+
+  .kpi-wrap { padding: 20px 24px; }
+
+  .kpi-top-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+  }
+  body.dark .kpi-top-bar { background: #141928; }
+
+  .kpi-top-bar label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing:.04em; }
+
+  .kpi-month-select {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color .2s;
+  }
+  .kpi-month-select:focus { border-color: var(--klein); }
+  body.dark .kpi-month-select { background: #0f1320; border-color: var(--border); color: var(--text); }
+
+  .kpi-salary-input {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    width: 120px;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color .2s;
+  }
+  .kpi-salary-input:focus { border-color: var(--klein); }
+  body.dark .kpi-salary-input { background: #0f1320; border-color: var(--border); color: var(--text); }
+
+  .btn-kpi-upload {
+    padding: 8px 16px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .btn-kpi-upload:hover { background: #009a66; transform: translateY(-1px); }
+
+  .btn-kpi-month-add {
+    padding: 8px 16px;
+    background: var(--klein);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all .2s;
+  }
+  .btn-kpi-month-add:hover { background: var(--klein-light); transform: translateY(-1px); }
+
+  .btn-kpi-month-del {
+    padding: 8px 12px;
+    background: none;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-kpi-month-del:hover { background: rgba(255,58,31,.1); }
+
+  /* KPI Summary card */
+  .kpi-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi-sum-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  body.dark .kpi-sum-card { background: #141928; }
+  .kpi-sum-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing:.04em; margin-bottom: 6px; }
+  .kpi-sum-value { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
+  .kpi-sum-value.highlight { color: var(--klein); }
+  .kpi-sum-value.green { color: var(--success); }
+  .kpi-sum-value.gold { color: var(--gold); }
+
+  /* KPI table */
+  .kpi-table-wrap { overflow-x: auto; }
+  .kpi-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  body.dark .kpi-table { background: #141928; }
+  .kpi-table thead tr { background: var(--klein); color: white; }
+  .kpi-table thead th {
+    padding: 11px 14px;
+    text-align: left;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .kpi-table tbody tr { border-bottom: 1px solid var(--klein-ghost); }
+  body.dark .kpi-table tbody tr { border-color: #2a3250; }
+  .kpi-table tbody tr:last-child { border-bottom: none; }
+  .kpi-table tbody tr:nth-child(odd) { background: white; }
+  .kpi-table tbody tr:nth-child(even) { background: #f5f6fa; }
+  body.dark .kpi-table tbody tr:nth-child(odd) { background: #141928; }
+  body.dark .kpi-table tbody tr:nth-child(even) { background: #181e30; }
+  .kpi-table tbody tr:hover { background: var(--klein-ghost) !important; }
+  .kpi-table td { padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+  .kpi-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kpi-table tfoot tr { background: var(--klein-dark); color: white; }
+  .kpi-table tfoot td { padding: 10px 14px; font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 600; }
+
+  .kpi-no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  body.dark .kpi-no-data { background: #141928; }
+  .kpi-no-data h3 { font-family: 'Unbounded', sans-serif; font-size: 13px; margin-bottom: 8px; }
+
+  @media (max-width: 768px) {
+    .kpi-wrap { padding: 8px 0; }
+    .kpi-top-bar { margin: 0 10px 12px; padding: 12px; gap: 8px; border-radius: 10px; }
+    .kpi-summary { margin: 0 10px 12px; }
+    .kpi-table-wrap { padding: 0; }
+    .kpi-table { border-radius: 0; min-width: 560px; }
+  }
 </style>
 </head>
 <body>
@@ -1237,12 +1425,22 @@
         </button>
       </div>
     </div>
-    <button class="btn-add" onclick="openAddModal()">
+    <button class="btn-add" style="background:#7c3aed" onclick="switchTab('kpi')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      KPI
+    </button>
+    <button class="btn-add" id="btnBackToPartners" style="display:none;background:#6b7599" onclick="switchTab('partners')">
+      ← Партнёры
+    </button>
+    <button class="btn-add" id="btnAddPartner" onclick="openAddModal()">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Добавить
     </button>
   </div>
 </header>
+
+<!-- PARTNERS VIEW WRAPPER -->
+<div id="partnersView">
 
 <!-- STATS BAR -->
 <div class="stats-bar" id="statsBar">
@@ -1331,6 +1529,45 @@
     <svg width="64" height="64" fill="none" stroke="#002FA7" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <h3>Партнёры не найдены</h3>
     <p>Попробуйте изменить фильтры или добавьте нового партнёра</p>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+</div><!-- end #partnersView -->
+
+<!-- KPI VIEW -->
+<div id="kpiView">
+  <div class="kpi-wrap">
+
+    <!-- Top bar: month selector + upload + salary -->
+    <div class="kpi-top-bar">
+      <div>
+        <label>Месяц</label><br>
+        <select class="kpi-month-select" id="kpiMonthSel" onchange="renderKpi()"></select>
+      </div>
+      <button class="btn-kpi-month-add" onclick="kpiAddMonth()">+ Месяц</button>
+      <button class="btn-kpi-month-del" onclick="kpiDelMonth()">Удалить месяц</button>
+      <div style="flex:1"></div>
+      <div>
+        <label>Оклад, ₽</label><br>
+        <input type="number" class="kpi-salary-input" id="kpiSalary" value="70000" onchange="renderKpi()">
+      </div>
+      <div>
+        <label>Загрузить отчёт CRM</label><br>
+        <button class="btn-kpi-upload" onclick="document.getElementById('kpiFileInput').click()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Загрузить .xlsx
+        </button>
+        <input type="file" id="kpiFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="kpiHandleFile(event)">
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="kpi-summary" id="kpiSummary"></div>
+
+    <!-- Table -->
+    <div class="kpi-table-wrap" id="kpiTableWrap"></div>
+
   </div>
 </div>
 
@@ -1439,6 +1676,10 @@
             <label class="form-label">Последний контакт</label>
             <input type="date" class="form-input" id="f_lastcontact">
           </div>
+          <div>
+            <label class="form-label">Комиссия партнёра, %</label>
+            <input type="number" class="form-input" id="f_commission" placeholder="10" min="0" max="100" step="1">
+          </div>
         </div>
       </div>
       <div class="form-section">
@@ -1466,8 +1707,21 @@
         </div>
       </div>
       <div class="form-section">
-        <div class="form-section-title">💬 Договорённости и заметки</div>
-        <textarea class="form-textarea field-full" id="f_notes" placeholder="Запишите договорённости, историю контакта..." style="width:100%;"></textarea>
+        <div class="form-section-title">🏢 О партнёре</div>
+        <textarea class="form-textarea field-full" id="f_about" placeholder="Кратко о партнёре: специализация, особенности, откуда пришёл..." style="width:100%;min-height:70px;"></textarea>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">💬 Добавить комментарий</div>
+        <div class="form-grid">
+          <div>
+            <label class="form-label">Дата комментария</label>
+            <input type="date" class="form-input" id="f_comment_date">
+          </div>
+          <div style="grid-column:1/-1">
+            <label class="form-label">Текст</label>
+            <textarea class="form-textarea" id="f_notes" placeholder="Договорённости, итоги звонка, встречи..." style="width:100%;min-height:80px;"></textarea>
+          </div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1563,10 +1817,15 @@
         <textarea class="card-textarea" id="cardAbout" placeholder="Краткое описание партнёра, особенности работы..." rows="3"></textarea>
       </div>
 
-      <!-- Последние договорённости -->
+      <!-- История комментариев -->
       <div>
-        <div class="card-section-title">💬 Последние договорённости</div>
-        <textarea class="card-textarea" id="cardNotes" rows="4"></textarea>
+        <div class="card-section-title">💬 История комментариев</div>
+        <div id="cardCommentsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+        <div style="background:var(--klein-ghost);border-radius:10px;padding:12px 14px">
+          <div class="card-info-label" style="margin-bottom:8px">+ Новый комментарий</div>
+          <input type="date" class="card-textarea" id="cardCommentDate" style="min-height:unset;height:36px;margin-bottom:8px;resize:none;">
+          <textarea class="card-textarea" id="cardCommentText" placeholder="Текст комментария..." rows="3"></textarea>
+        </div>
       </div>
 
     </div>
@@ -1746,56 +2005,57 @@ function formatPhoneDisplay(raw) {
 // ─── DATA ───────────────────────────────────────────────
 const COLS = [
   { key: 'status',      label: 'Статус',         short: 'Статус',    visible: true },
-  { key: 'date',        label: 'Дата',          short: 'Дата',      visible: false },
-  { key: 'company',     label: 'Компания',       short: 'Компания',  visible: true },
-  { key: 'type',        label: 'Тип',            short: 'Тип',       visible: true },
-  { key: 'city',        label: 'Город',          short: 'Город',     visible: true },
-  { key: 'lpr',         label: 'ЛПР',            short: 'ЛПР',       visible: true },
-  { key: 'phone',       label: 'Телефон',        short: 'Тел.',      visible: true },
-  { key: 'email',       label: 'Связь',          short: 'Связь',     visible: true },
-  { key: 'login',       label: 'Логин',          short: 'Логин',     visible: true },
-  { key: 'pass',        label: 'Пароль',         short: 'Пароль',    visible: false },
-  { key: 'dedicated',   label: 'Вых. номер',     short: 'Вых.',      visible: false },
-  { key: 'site',        label: 'Сайт',           short: 'Сайт',      visible: false },
-  { key: 'lastcontact', label: 'Посл. контакт',  short: 'Контакт',   visible: true },
-  { key: 'req',         label: 'Реквизиты',      short: 'Рекв.',     visible: false },
-  { key: 'bank',        label: 'Банк',           short: 'Банк',      visible: false },
-  { key: 'fio',         label: 'ФИО',            short: 'ФИО',       visible: false },
-  { key: 'notes',       label: 'Договорённости', short: 'Заметки',   visible: true },
-  { key: 'actions',     label: '',               short: '',          visible: true },
+  { key: 'val_kpi',     label: 'Вал',            short: 'Вал',       visible: true },
+  { key: 'date',        label: 'Дата',           short: 'Дата',      visible: false },
+  { key: 'company',     label: 'Компания',        short: 'Компания',  visible: true },
+  { key: 'type',        label: 'Тип',             short: 'Тип',       visible: true },
+  { key: 'city',        label: 'Город',           short: 'Город',     visible: true },
+  { key: 'lpr',         label: 'ЛПР',             short: 'ЛПР',       visible: true },
+  { key: 'phone',       label: 'Телефон',         short: 'Тел.',      visible: true },
+  { key: 'email',       label: 'Связь',           short: 'Связь',     visible: true },
+  { key: 'login',       label: 'Логин',           short: 'Логин',     visible: true },
+  { key: 'pass',        label: 'Пароль',          short: 'Пароль',    visible: false },
+  { key: 'dedicated',   label: 'Выд. номер',      short: 'Выд.',      visible: false },
+  { key: 'site',        label: 'Сайт',            short: 'Сайт',      visible: false },
+  { key: 'lastcontact', label: 'Посл. контакт',   short: 'Контакт',   visible: true },
+  { key: 'req',         label: 'Реквизиты',       short: 'Рекв.',     visible: false },
+  { key: 'bank',        label: 'Банк',            short: 'Банк',      visible: false },
+  { key: 'fio',         label: 'ФИО',             short: 'ФИО',       visible: false },
+  { key: 'notes',       label: 'Договорённости',  short: 'Заметки',   visible: true },
+  { key: 'actions',     label: '',                short: '',          visible: true },
 ];
 
 const RAW_DATA = [
-  { date:'2026-03-17', company:'Демонтаж24', type:'СК', city:'МСК/СПБ', lpr:'Сергей', phone:'8 (981) 046-20-35\n8 (930) 333-18-43', email:'demontaz78@inbox.ru', login:'21860299', pass:'41272136', dedicated:'-', site:'demontaz24.ru', lastcontact:'2026-03-17', req:'-', bank:'Нет', fio:'-', notes:'Готовы работать / КП на почту и в телегу' },
-  { date:'2026-03-18', company:'Аура', type:'СК', city:'МСК', lpr:'Андрей', phone:'8 (926) 002-40-30', email:'info@msk-aura.ru', login:'21863424', pass:'52793303', dedicated:'-', site:'sk-aura.ru', lastcontact:'2026-03-18', req:'-', bank:'Нет', fio:'-', notes:'Ранее общался с Кириллом / готов передавать заявки в телеге' },
+  { date:'2026-03-17', company:'Демонтаж24', type:'СК', city:'МСК/СПБ', lpr:'Сергей', phone:'8 (981) 046-20-35\n8 (930) 333-18-43', email:'demontaz78@inbox.ru', login:'21860299', pass:'41272136', commission:10, dedicated:'-', site:'demontaz24.ru', lastcontact:'2026-03-17', req:'-', bank:'Нет', fio:'-', notes:'Готовы работать / КП на почту и в телегу' },
+  { date:'2026-03-18', company:'Аура', type:'СК', city:'МСК', lpr:'Андрей', phone:'8 (926) 002-40-30', email:'info@msk-aura.ru', login:'21863424', pass:'52793303', commission:10, dedicated:'-', site:'sk-aura.ru', lastcontact:'2026-03-18', req:'-', bank:'Нет', fio:'-', notes:'Ранее общался с Кириллом / готов передавать заявки в телеге' },
   { date:'', company:'ЖСК «МАРЬИНО-5»', type:'УК', city:'МСК', lpr:'Антонина Кирилловна', phone:'8 (495) 349-71-60', email:'gsk-5@yandex.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-03-26', req:'-', bank:'Нет', fio:'-', notes:'Отвёз ей плакаты / дому 35 лет / Антонина следит за всеми ремонтами в доме / хочет ремонт окон в подъезде' },
   { date:'', company:'ТСЖ «ЗАГОРЬЕ 23-1»', type:'УК', city:'МСК', lpr:'Марина Анатольевна', phone:'8 (499) 725-87-08', email:'zagorje23.1@bk.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-03-18', req:'-', bank:'Нет', fio:'-', notes:'Уже с кем-то сотрудничают / Марина хочет русские проф бригады / плакаты нет, только если будут люди сами обращаться / письмо продублировать / свой телефон не даст' },
   { date:'', company:'ООО «СК «НАГАТИНО»', type:'УК', city:'МСК', lpr:'Лариса', phone:'8 (915) 118-06-60', email:'nagatino-sk@yandex.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-03-18', req:'-', bank:'Нет', fio:'-', notes:'Общались в зуме / Сейчас интерес только по мопам / общаемся в телеге / Будут заявки, передаст' },
   { date:'', company:'Артарус', type:'СК', city:'МСК', lpr:'Хусейн', phone:'8 (969) 464-75-69', email:'-', login:'-', pass:'-', dedicated:'-', site:'artarusstone.ru', lastcontact:'2026-03-18', req:'-', bank:'Нет', fio:'-', notes:'Готов сотрудничать / написал ему в телеграм' },
   { date:'', company:'Анатомия ремонта', type:'СК', city:'СПБ', lpr:'Рашид', phone:'8 (965) 031-21-21', email:'info@anatomy-remonta.ru', login:'-', pass:'-', dedicated:'-', site:'anatomy-remonta.ru', lastcontact:'2026-03-19', req:'-', bank:'Нет', fio:'-', notes:'Общались в телеге / спросил по заявке на 80.000 / возможно даст контакт' },
-  { date:'2026-03-23', company:'Бюро Контраст', type:'Дизайн-студия', city:'СПБ', lpr:'Антон', phone:'8 (914) 710-73-51', email:'-', login:'21902941', pass:'39866882', dedicated:'-', site:'-', lastcontact:'2026-03-23', req:'-', bank:'Нет', fio:'-', notes:'Звонил в колл центр по сотрудничеству / Перезвонили ему / списались в максе' },
-  { date:'2026-03-24', company:'Ориентир', type:'Юристы', city:'МСК', lpr:'Андрей', phone:'8 (965) 313-84-39', email:'-', login:'21915381', pass:'38132580', dedicated:'-', site:'-', lastcontact:'2026-03-25', req:'-', bank:'Нет', fio:'-', notes:'Подписали договор / ждём заявки' },
+  { date:'2026-03-23', company:'Бюро Контраст', type:'Дизайн-студия', city:'СПБ', lpr:'Антон', phone:'8 (914) 710-73-51', email:'-', login:'21902941', pass:'39866882', commission:10, dedicated:'-', site:'-', lastcontact:'2026-03-23', req:'-', bank:'Нет', fio:'-', notes:'Звонил в колл центр по сотрудничеству / Перезвонили ему / списались в максе' },
+  { date:'2026-03-24', company:'Ориентир', type:'Юристы', city:'МСК', lpr:'Андрей', phone:'8 (965) 313-84-39', email:'-', login:'21915381', pass:'38132580', commission:10, dedicated:'-', site:'-', lastcontact:'2026-03-25', req:'-', bank:'Нет', fio:'-', notes:'Подписали договор / ждём заявки' },
   { date:'', company:'Строй Уют Дом', type:'СК', city:'МСК', lpr:'Илья', phone:'8 (911) 560-00-70', email:'-', login:'-', pass:'-', dedicated:'-', site:'stroyuyutdom.ru', lastcontact:'2026-03-25', req:'-', bank:'Нет', fio:'-', notes:'Делают в основном под ключ / частичку не берут как правило / не знали кому её отдавать / ближе к лету обещали много давать / списались в макс' },
   { date:'', company:'Строй Маг', type:'Магазин', city:'МСК', lpr:'Тигран', phone:'8 (926) 054-68-68', email:'-', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-03-25', req:'-', bank:'Нет', fio:'-', notes:'Сам нам написал / 2 магазина в Москве / хочет передавать клиентов и давать нам свои материалы / диалог в телеге' },
   { date:'', company:'ЖСК «МАРЬИНО-1»', type:'УК', city:'МСК', lpr:'Наталья Геннадьевна', phone:'8 (495) 657-08-40\n8 (926) 388-07-55', email:'gsk_maryno_1@mail.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-04-01', req:'-', bank:'Нет', fio:'-', notes:'Отвёз плакаты / Спрашивала про агентский договор / созвониться через месяц / на этаже 3 2 1 2 / на днях прорвало трубу в подвале / бухгалтер Татьяна Николаевна' },
   { date:'', company:'ЖСК «КРЫМ-1»', type:'УК', city:'МСК', lpr:'Ирина Николаевна', phone:'8 (903) 124-13-01', email:'jskkrim1@yandex.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-04-02', req:'-', bank:'Нет', fio:'-', notes:'Будет давать мой номер жильцам / плакаты вешать не будет / иногда обращаются' },
   { date:'', company:'ТСЖ «НАДЕЖДА»', type:'УК', city:'МСК', lpr:'Надежда Владимировна', phone:'8 (917) 557-50-42', email:'tsgnadegda@mail.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Направил ей объявления / сама распечатала и повесила / контакт мой записала' },
-  { date:'2026-04-08', company:'Плакаты УК', type:'УК', city:'МСК', lpr:'-', phone:'7 (495) 146-39-11', email:'-', login:'22036093', pass:'35539004', dedicated:'7 (495) 146-39-11', site:'-', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Номер телефона на плакатах для УК (ТСЖ «НАДЕЖДА»; ЖСК «МАРЬИНО-5»; ЖСК «МАРЬИНО-1»)' },
+  { date:'2026-04-08', company:'Плакаты УК', type:'УК', city:'МСК', lpr:'-', phone:'7 (495) 146-39-11', email:'-', login:'22036093', pass:'35539004', commission:10, dedicated:'7 (495) 146-39-11', site:'-', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Номер телефона на плакатах для УК (ТСЖ «НАДЕЖДА»; ЖСК «МАРЬИНО-5»; ЖСК «МАРЬИНО-1»)' },
   { date:'', company:'Городская экспертиза', type:'Юристы', city:'СПБ', lpr:'Дмитрий', phone:'7 (812) 600-93-13', email:'info@gorexpert.ru', login:'-', pass:'-', dedicated:'-', site:'gorexpert.ru', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Есть партнёр со ставкой выше 70 / формат знаком / готов сотрудничать КП на почту + взял номер' },
   { date:'', company:'ЖСК «КОМЕТА»', type:'УК', city:'МСК', lpr:'Сергей Владимирович', phone:'8 (495) 704-57-00', email:'kometa-zhsk@mail.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Контакт взял / будет передавать по возможности' },
   { date:'', company:'СИНЭО', type:'Юристы', city:'СПБ', lpr:'Александр', phone:'7 (499) 370-31-82', email:'info@inexpert.ru', login:'-', pass:'-', dedicated:'-', site:'inexpert.ru', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Экспертиза по заливу у них 25.000, что дорого / клиентов немного сейчас / к диалогу открыт / контакт взял / как будут заявки, наберёт' },
   { date:'', company:'Центр Оценки и Экспертизы', type:'Юристы', city:'СПБ', lpr:'Олег', phone:'7 (812) 642-73-52', email:'ekspertizaspb@yandex.ru', login:'-', pass:'-', dedicated:'-', site:'ekspertizaspb.ru', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Нашёл подрядчика (его друг) / интересно, что мы возьмём от 70 / просил написать в телегу, а её нет / будут заявки, передаст' },
-  { date:'2026-04-08', company:'MS-Строй', type:'СК', city:'СПБ', lpr:'Виталий', phone:'7 (904) 637-77-13', email:'info@ms-stroy.com / тг @vit_ron', login:'22040541', pass:'18269736', dedicated:'-', site:'ms-stroy.com', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Занимается штукатуркой / планирует передать заявку' },
-  { date:'2026-04-15', company:'Заливу Нет', type:'Юристы', city:'СПБ', lpr:'Александр', phone:'7 (812) 902-13-02', email:'zalivunet@mail.ru', login:'22086628', pass:'45081486', dedicated:'-', site:'zalivunet.ru', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Договор не хочет подписывать / хотел бы получать заявки на экспертизы / нам будет передавать / скинуть ЛК в телегу' },
-  { date:'2026-04-15', company:'—', type:'Риелтор', city:'МСК', lpr:'Татьяна', phone:'7 (903) 012-69-55', email:'-', login:'22090160', pass:'17444644', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / передала заявку' },
-  { date:'', company:'Служба Ремонта', type:'СК', city:'СПБ', lpr:'Антон Сергеевич', phone:'8 (901) 289-10-92', email:'bob.4upecko@yandex.ru / тг @kursakin', login:'20934307', pass:'28426347', dedicated:'-', site:'-', lastcontact:'2026-04-16', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / делают от 600к / были минусы по заявкам / созвонились в Яндексе / хочет в месяц 100+ / лояльный' },
-  { date:'', company:'mir', type:'СК', city:'МСК', lpr:'Андрей', phone:'7 (958) 272-44-70', email:'asin3@yandex.ru / тг @asinremont', login:'17065927', pass:'85986281', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'ВТБ', fio:'-', notes:'Партнёр Виталия / заявки в тг / не пользуется ЛК / передаёт квартиры и технику' },
-  { date:'', company:'imperium', type:'Риелтор', city:'МСК', lpr:'Екатерина', phone:'7 (917) 552-54-93', email:'imperium_broker@mail.ru', login:'22022050', pass:'90608239', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / настраивает интеграцию ЛК себе на сайт' },
-  { date:'', company:'Виталий (прямой)', type:'СК', city:'МСК', lpr:'Виталий', phone:'7 (926) 388-33-23', email:'-', login:'21491664', pass:'78956742', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / на телефон и в тг не ответил' },
-  { date:'', company:'stroyinjener', type:'СК', city:'МСК', lpr:'Олег', phone:'7 (925) 330-00-70', email:'info@stroyengineer.ru / тг @Lego_S_55', login:'21490772', pass:'97184916', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / заявки передают менеджеры в ЛК / нет заключений / договорились получать заявки в макс' },
-  { date:'', company:'mayer design', type:'Дизайн-студия', city:'МСК', lpr:'Юлия', phone:'7 (925) 426-51-18', email:'тг @studio_atrem_meyer', login:'21397306', pass:'68496050', dedicated:'-', site:'-', lastcontact:'2026-04-16', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / контакт с Юлией в тг / добавила в чат с заявками / хочет примеры работ и расценки' },
+  { date:'2026-04-08', company:'MS-Строй', type:'СК', city:'СПБ', lpr:'Виталий', phone:'7 (904) 637-77-13', email:'info@ms-stroy.com / тг @vit_ron', login:'22040541', pass:'18269736', commission:10, dedicated:'-', site:'ms-stroy.com', lastcontact:'2026-04-08', req:'-', bank:'Нет', fio:'-', notes:'Занимается штукатуркой / планирует передать заявку' },
+  { date:'2026-04-15', company:'Заливу Нет', type:'Юристы', city:'СПБ', lpr:'Александр', phone:'7 (812) 902-13-02', email:'zalivunet@mail.ru', login:'22086628', pass:'45081486', commission:10, dedicated:'-', site:'zalivunet.ru', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Договор не хочет подписывать / хотел бы получать заявки на экспертизы / нам будет передавать / скинуть ЛК в телегу' },
+  { date:'2026-04-15', company:'—', type:'Риелтор', city:'МСК', lpr:'Татьяна', phone:'7 (903) 012-69-55', email:'-', login:'22090160', pass:'17444644', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / передала заявку' },
+  { date:'', company:'Служба Ремонта', type:'СК', city:'СПБ', lpr:'Антон Сергеевич', phone:'8 (901) 289-10-92', email:'bob.4upecko@yandex.ru / тг @kursakin', login:'20934307', pass:'28426347', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-16', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / делают от 600к / были минусы по заявкам / созвонились в Яндексе / хочет в месяц 100+ / лояльный' },
+  { date:'', company:'mir', type:'СК', city:'МСК', lpr:'Андрей', phone:'7 (958) 272-44-70', email:'asin3@yandex.ru / тг @asinremont', login:'17065927', pass:'85986281', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'ВТБ', fio:'-', notes:'Партнёр Виталия / заявки в тг / не пользуется ЛК / передаёт квартиры и технику' },
+  { date:'', company:'imperium', type:'Риелтор', city:'МСК', lpr:'Екатерина', phone:'7 (917) 552-54-93', email:'imperium_broker@mail.ru', login:'22022050', pass:'90608239', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / настраивает интеграцию ЛК себе на сайт' },
+  { date:'', company:'Виталий (прямой)', type:'СК', city:'МСК', lpr:'Виталий', phone:'7 (926) 388-33-23', email:'-', login:'21491664', pass:'78956742', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / на телефон и в тг не ответил' },
+  { date:'', company:'stroyinjener', type:'СК', city:'МСК', lpr:'Олег', phone:'7 (925) 330-00-70', email:'info@stroyengineer.ru / тг @Lego_S_55', login:'21490772', pass:'97184916', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / заявки передают менеджеры в ЛК / нет заключений / договорились получать заявки в макс' },
+  { date:'', company:'mayer design', type:'Дизайн-студия', city:'МСК', lpr:'Юлия', phone:'7 (925) 426-51-18', email:'тг @studio_atrem_meyer', login:'21397306', pass:'68496050', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-16', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / контакт с Юлией в тг / добавила в чат с заявками / хочет примеры работ и расценки' },
   { date:'', company:'—', type:'Риелтор', city:'МСК', lpr:'Галина', phone:'8 (903) 731-76-37', email:'7317637@mail.ru', login:'-', pass:'-', dedicated:'-', site:'-', lastcontact:'2026-04-15', req:'-', bank:'Нет', fio:'-', notes:'Партнёр Виталия / написать в макс / по условиям помнит' },
-  { date:'2026-04-20', company:'Честный ремонт', type:'СК', city:'СПБ', lpr:'Алексей', phone:'8 (965) 095-95-77', email:'в максе', login:'22124803', pass:'79254307', dedicated:'-', site:'-', lastcontact:'2026-04-20', req:'-', bank:'Нет', fio:'-', notes:'Работают от 300 / инфу в макс' },
+  { date:'2026-04-20', company:'Честный ремонт', type:'СК', city:'СПБ', lpr:'Алексей', phone:'8 (965) 095-95-77', email:'в максе', login:'22124803', pass:'79254307', commission:10, dedicated:'-', site:'-', lastcontact:'2026-04-20', req:'-', bank:'Нет', fio:'-', notes:'Работают от 300 / инфу в макс' },
 ];
 
 let partners = RAW_DATA.map((p, i) => ({ id: i + 1, ...p }));
@@ -1919,6 +2179,15 @@ function renderTable() {
     });
   }
 
+  // Update val_kpi column label with actual month
+  const kpiKeys = Object.keys(kpiData).sort().reverse();
+  const kpiActiveKey = kpiKeys.find(k => kpiData[k]?.rows?.length > 0);
+  const valCol = COLS.find(c => c.key === 'val_kpi');
+  if (valCol) {
+    valCol.label = kpiActiveKey ? `Вал ${kpiMonthLabel(kpiActiveKey).split(' ')[0]}` : 'Вал';
+    valCol.short  = valCol.label;
+  }
+
   // Build header with drag support
   const visCols = COLS.filter(c => c.visible);
   const thead = document.getElementById('tableHead');
@@ -1973,6 +2242,12 @@ function renderCell(p, col) {
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div></td>`;
+    case 'val_kpi': {
+      const val = getPartnerLastMonthVal(p.login);
+      if (val === null) return `<td class="compact"><span style="color:#ccc">—</span></td>`;
+      const color = val > 0 ? 'var(--success)' : val < 0 ? 'var(--accent)' : 'var(--text-muted)';
+      return `<td class="compact"><span style="font-weight:600;color:${color};font-size:12px;white-space:nowrap">${Math.round(val).toLocaleString('ru-RU')} ₽</span></td>`;
+    }
     case 'status': {
       const s = v || 'active';
       const isActive = s === 'active';
@@ -1990,7 +2265,14 @@ function renderCell(p, col) {
     case 'site': return `<td>${siteHtml(v)}</td>`;
     case 'date': return `<td>${dateHtml(v)}</td>`;
     case 'lastcontact': return `<td>${lastContactHtml(v)}</td>`;
-    case 'notes': return `<td><div class="notes-cell" title="${(v||'').replace(/"/g,'&quot;')}">${v||'—'}</div></td>`;
+    case 'notes': {
+      const comments = p.comments && p.comments.length ? p.comments : (p.notes ? [{ date: '', text: p.notes }] : []);
+      const last = comments[comments.length - 1];
+      if (!last) return `<td><div class="notes-cell">—</div></td>`;
+      const dateStr = last.date ? `<span style="font-size:10px;color:var(--text-muted);margin-right:5px">${last.date.split('-').reverse().join('.')}</span>` : '';
+      const countBadge = comments.length > 1 ? `<span style="font-size:10px;background:var(--klein-pale);color:var(--klein);border-radius:10px;padding:1px 6px;margin-left:4px;white-space:nowrap">+${comments.length - 1}</span>` : '';
+      return `<td><div class="notes-cell" title="${(last.text||'').replace(/"/g,'&quot;')}">${dateStr}${last.text||'—'}${countBadge}</div></td>`;
+    }
     case 'phone': return `<td>${phoneHtml(v)}</td>`;
     case 'email': {
       const contacts = p.contacts || parseLegacyEmail(v);
@@ -2044,7 +2326,10 @@ function openEditModal(id) {
   document.getElementById('f_req').value = p.req || '';
   document.getElementById('f_bank').value = p.bank || '';
   document.getElementById('f_fio').value = p.fio || '';
-  document.getElementById('f_notes').value = p.notes || '';
+  document.getElementById('f_commission').value = p.commission != null ? p.commission : 10;
+  document.getElementById('f_about').value = p.about || '';
+  document.getElementById('f_notes').value = '';
+  document.getElementById('f_comment_date').value = new Date().toISOString().split('T')[0];
   document.getElementById('modalOverlay').classList.add('open');
 }
 
@@ -2055,13 +2340,18 @@ function closeModal() {
 
 function clearForm() {
   ['f_company','f_lpr','f_phone','f_login','f_pass',
-   'f_dedicated','f_site','f_date','f_lastcontact','f_req','f_fio','f_notes']
+   'f_dedicated','f_site','f_date','f_lastcontact','f_req','f_fio','f_notes','f_about']
   .forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('f_status').value = 'active';
+  document.getElementById('f_commission').value = '10';
+  document.getElementById('f_comment_date').value = new Date().toISOString().split('T')[0];
   setContactsToForm([]);
 }
 
 function savePartner() {
+  const newCommentText = document.getElementById('f_notes').value.trim();
+  const newCommentDate = document.getElementById('f_comment_date').value;
+
   const data = {
     company: document.getElementById('f_company').value.trim() || '—',
     type: document.getElementById('f_type').value,
@@ -2080,16 +2370,31 @@ function savePartner() {
     bank: document.getElementById('f_bank').value || 'Нет',
     status: document.getElementById('f_status').value || 'active',
     fio: document.getElementById('f_fio').value.trim() || '-',
-    notes: document.getElementById('f_notes').value.trim(),
+    about: document.getElementById('f_about').value.trim(),
+    commission: parseFloat(document.getElementById('f_commission').value) || 10,
   };
 
   if (editingId) {
     const idx = partners.findIndex(p => p.id === editingId);
-    if (idx !== -1) partners[idx] = { ...partners[idx], ...data };
+    if (idx !== -1) {
+      const existing = partners[idx];
+      // Append new comment if text entered
+      if (newCommentText) {
+        const comments = existing.comments ? [...existing.comments] : (existing.notes ? [{ date: existing.lastcontact || '', text: existing.notes }] : []);
+        comments.push({ date: newCommentDate, text: newCommentText });
+        data.comments = comments;
+        data.notes = newCommentText; // keep notes as latest for legacy
+      } else {
+        data.comments = existing.comments || (existing.notes ? [{ date: existing.lastcontact || '', text: existing.notes }] : []);
+        data.notes = existing.notes || '';
+      }
+      partners[idx] = { ...existing, ...data };
+    }
     showToast('✅ Партнёр обновлён');
   } else {
     const newId = partners.length > 0 ? Math.max(...partners.map(p => p.id)) + 1 : 1;
-    partners.push({ id: newId, ...data });
+    const comments = newCommentText ? [{ date: newCommentDate, text: newCommentText }] : [];
+    partners.push({ id: newId, ...data, comments, notes: newCommentText });
     showToast('✅ Партнёр добавлен');
   }
 
@@ -2637,14 +2942,13 @@ function openCard(id) {
   // Meta badges
   const typeInfo = allTypes().find(t => t.value === p.type);
   const typeBadgeHtml = typeInfo
-    ? `<span class="badge" style="background:${typeInfo.bg};color:${typeInfo.color}">${p.type}</span>`
-    : (p.type ? `<span class="badge">${p.type}</span>` : '');
-  const cityInfo = allCities().find(c => c.value === p.city);
+    ? `<span class="badge" style="background:rgba(255,255,255,.22);color:white;border:1px solid rgba(255,255,255,.35)">${p.type}</span>`
+    : (p.type ? `<span class="badge" style="background:rgba(255,255,255,.22);color:white;border:1px solid rgba(255,255,255,.35)">${p.type}</span>` : '');
   const cityBadgeHtml = p.city
-    ? `<span class="badge" style="background:rgba(255,255,255,.15);color:white">${p.city}</span>`
+    ? `<span class="badge" style="background:rgba(255,255,255,.22);color:white;border:1px solid rgba(255,255,255,.35)">${p.city}</span>`
     : '';
   const isActive = !p.status || p.status === 'active';
-  const statusBadgeHtml = `<span class="badge" style="background:${isActive ? 'rgba(0,255,150,.2)' : 'rgba(255,80,50,.2)'};color:${isActive ? '#6dffbb' : '#ffaa99'}">${isActive ? 'Активный' : 'Неактивный'}</span>`;
+  const statusBadgeHtml = `<span class="badge" style="background:${isActive ? 'rgba(0,220,130,.25)' : 'rgba(255,80,50,.25)'};color:${isActive ? '#6dffbb' : '#ffaa99'};border:1px solid ${isActive ? 'rgba(0,220,130,.5)' : 'rgba(255,80,50,.5)'}">${isActive ? 'Активный' : 'Неактивный'}</span>`;
   document.getElementById('cardMeta').innerHTML = statusBadgeHtml + typeBadgeHtml + cityBadgeHtml;
 
   // Contacts grid
@@ -2720,7 +3024,11 @@ function openCard(id) {
 
   // About & Notes
   document.getElementById('cardAbout').value = p.about || '';
-  document.getElementById('cardNotes').value = p.notes || '';
+  document.getElementById('cardCommentDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('cardCommentText').value = '';
+
+  // Comments list
+  renderCardComments(p);
 
   // Overdue badge
   const overdueEl = document.getElementById('cardOverdueBadge');
@@ -2765,15 +3073,337 @@ function rowContextMenu(e, id) {
   }
 }
 
+function renderCardComments(p) {
+  const comments = p.comments && p.comments.length
+    ? [...p.comments].reverse()
+    : (p.notes ? [{ date: p.lastcontact || '', text: p.notes }] : []);
+  const el = document.getElementById('cardCommentsList');
+  if (!comments.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text-muted);padding:4px 0">Комментариев пока нет</div>';
+    return;
+  }
+  el.innerHTML = comments.map((c, ri) => {
+    const realIdx = (p.comments ? p.comments.length - 1 - ri : 0);
+    const dateStr = c.date ? c.date.split('-').reverse().join('.') : '—';
+    return `<div class="card-comment-item">
+      <div class="card-comment-date">
+        📅 ${dateStr}
+        <button class="card-comment-del" onclick="deleteComment(${realIdx})" title="Удалить">🗑</button>
+      </div>
+      <div class="card-comment-text">${(c.text||'').replace(/</g,'&lt;')}</div>
+    </div>`;
+  }).join('');
+}
+
+function deleteComment(idx) {
+  if (!cardEditingId) return;
+  const p = partners.find(x => x.id === cardEditingId);
+  if (!p || !p.comments) return;
+  p.comments.splice(idx, 1);
+  p.notes = p.comments.length ? p.comments[p.comments.length - 1].text : '';
+  save();
+  renderCardComments(p);
+  renderTable();
+  showToast('🗑 Комментарий удалён');
+}
+
 function saveCardNotes() {
   if (!cardEditingId) return;
   const idx = partners.findIndex(p => p.id === cardEditingId);
   if (idx === -1) return;
-  partners[idx].about = document.getElementById('cardAbout').value.trim();
-  partners[idx].notes = document.getElementById('cardNotes').value.trim();
+  const p = partners[idx];
+
+  p.about = document.getElementById('cardAbout').value.trim();
+
+  const newText = document.getElementById('cardCommentText').value.trim();
+  const newDate = document.getElementById('cardCommentDate').value;
+  if (newText) {
+    if (!p.comments) {
+      p.comments = p.notes ? [{ date: p.lastcontact || '', text: p.notes }] : [];
+    }
+    p.comments.push({ date: newDate, text: newText });
+    p.notes = newText;
+    document.getElementById('cardCommentText').value = '';
+    document.getElementById('cardCommentDate').value = new Date().toISOString().split('T')[0];
+    renderCardComments(p);
+  }
+
   save();
   renderTable();
   showToast('✅ Сохранено');
+}
+
+// ─── VAL LOOKUP FOR MAIN TABLE ─────────────────────────
+function getPartnerLastMonthVal(login) {
+  if (!login || login === '-') return null;
+  const keys = Object.keys(kpiData).sort().reverse();
+  if (!keys.length) return null;
+  // Find last month that actually has rows
+  const lastKeyWithData = keys.find(k => kpiData[k]?.rows?.length > 0);
+  if (!lastKeyWithData) return null;
+  const row = kpiData[lastKeyWithData].rows.find(r => String(r.login).trim() === String(login).trim());
+  if (!row) return null;
+  return row.val;
+}
+
+function kpiDiag() {
+  const keys = Object.keys(kpiData).sort();
+  if (!keys.length) { alert('kpiData пустой — данные не загружены'); return; }
+  const lastKey = keys[keys.length - 1];
+  const month = kpiData[lastKey];
+  const rows = month?.rows || [];
+
+  let msg = `Последний месяц: ${lastKey}\nСтрок в KPI: ${rows.length}\n\nЛогины в KPI:\n`;
+  rows.forEach(r => { msg += `  ${r.login} — вал: ${Math.round(r.val)}\n`; });
+  msg += `\nЛогины партнёров (с ЛК):\n`;
+  partners.filter(p => p.login && p.login !== '-').forEach(p => {
+    const match = rows.find(r => String(r.login).trim() === String(p.login).trim());
+    msg += `  ${p.login} (${p.company}) → ${match ? 'найден, вал: ' + Math.round(match.val) : 'НЕ НАЙДЕН'}\n`;
+  });
+
+  // Show in modal with copy button
+  let diagOverlay = document.getElementById('diagOverlay');
+  if (!diagOverlay) {
+    diagOverlay = document.createElement('div');
+    diagOverlay.id = 'diagOverlay';
+    diagOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,15,40,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+    diagOverlay.innerHTML = `
+      <div style="background:white;border-radius:12px;width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 12px 48px rgba(0,0,0,.3)">
+        <div style="background:var(--klein);color:white;padding:14px 18px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:Unbounded,sans-serif;font-size:13px;font-weight:600">🔍 Диагностика KPI</span>
+          <button onclick="document.getElementById('diagOverlay').remove()" style="background:rgba(255,255,255,.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px">×</button>
+        </div>
+        <textarea id="diagText" readonly style="flex:1;padding:16px;font-family:Courier New,monospace;font-size:12px;border:none;outline:none;resize:none;min-height:300px;background:#f8f9ff;color:#0a0f1e;line-height:1.6"></textarea>
+        <div style="padding:12px 16px;border-top:1px solid #e0e4f0;display:flex;justify-content:flex-end;gap:8px">
+          <button onclick="const t=document.getElementById('diagText');t.select();t.setSelectionRange(0,99999);navigator.clipboard.writeText(t.value).then(()=>showToast('📋 Скопировано')).catch(()=>{document.execCommand('copy');showToast('📋 Скопировано')})" style="padding:8px 20px;background:var(--klein);color:white;border:none;border-radius:8px;font-family:Unbounded,sans-serif;font-size:11px;font-weight:600;cursor:pointer">Скопировать</button>
+          <button onclick="document.getElementById('diagOverlay').remove()" style="padding:8px 20px;background:#f0f2fa;color:#444;border:none;border-radius:8px;font-size:13px;cursor:pointer">Закрыть</button>
+        </div>
+      </div>`;
+    document.body.appendChild(diagOverlay);
+  }
+  document.getElementById('diagText').value = msg;
+  document.getElementById('diagOverlay').style.display = 'flex';
+}
+
+// ─── TAB SWITCHING ─────────────────────────────────────
+let currentTab = 'partners';
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('partnersView').style.display = tab === 'partners' ? 'block' : 'none';
+  document.getElementById('kpiView').style.display = tab === 'kpi' ? 'block' : 'none';
+  document.getElementById('btnBackToPartners').style.display = tab === 'kpi' ? 'inline-flex' : 'none';
+  document.getElementById('btnAddPartner').style.display = tab === 'partners' ? 'inline-flex' : 'none';
+  if (tab === 'kpi') { kpiInit(); }
+}
+
+// ─── KPI ───────────────────────────────────────────────
+// kpiData structure: { [monthKey]: { rows: [{login, company, val, adv, ordersAccepted, ordersDone, bn}], salary: 70000 } }
+let kpiData = {};
+
+function kpiInit() {
+  try {
+    const s = localStorage.getItem('kpi_data_v1');
+    if (s) kpiData = JSON.parse(s);
+  } catch(e) {}
+  // Try firebase
+  db.ref('kpiData').once('value').then(snap => {
+    if (snap.val()) { kpiData = snap.val(); kpiSaveLocal(); }
+    kpiRebuildMonthSel();
+    renderKpi();
+  }).catch(() => { kpiRebuildMonthSel(); renderKpi(); });
+}
+
+function kpiSaveLocal() {
+  try { localStorage.setItem('kpi_data_v1', JSON.stringify(kpiData)); } catch(e) {}
+}
+function kpiSave() {
+  kpiSaveLocal();
+  db.ref('kpiData').set(kpiData).catch(e => console.error(e));
+}
+
+function kpiCurrentMonth() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function kpiMonthLabel(key) {
+  const [y, m] = key.split('-');
+  const names = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  return `${names[parseInt(m)-1]} ${y}`;
+}
+
+function kpiRebuildMonthSel() {
+  const sel = document.getElementById('kpiMonthSel');
+  const cur = sel.value;
+  const keys = Object.keys(kpiData).sort().reverse();
+  if (!keys.length) {
+    const cm = kpiCurrentMonth();
+    kpiData[cm] = { rows: [], salary: 70000 };
+    kpiSave();
+    keys.push(cm);
+  }
+  sel.innerHTML = keys.map(k => `<option value="${k}" ${k===cur?'selected':''}>${kpiMonthLabel(k)}</option>`).join('');
+  if (!cur || !keys.includes(cur)) sel.value = keys[0];
+}
+
+function kpiAddMonth() {
+  const val = prompt('Введите месяц в формате ГГГГ-ММ (например 2026-05):');
+  if (!val || !/^\d{4}-\d{2}$/.test(val.trim())) { showToast('⚠️ Неверный формат'); return; }
+  const key = val.trim();
+  if (!kpiData[key]) kpiData[key] = { rows: [], salary: 70000 };
+  kpiSave();
+  kpiRebuildMonthSel();
+  document.getElementById('kpiMonthSel').value = key;
+  renderKpi();
+  showToast(`✅ Месяц ${kpiMonthLabel(key)} добавлен`);
+}
+
+function kpiDelMonth() {
+  const key = document.getElementById('kpiMonthSel').value;
+  if (!key) return;
+  if (!confirm(`Удалить данные за ${kpiMonthLabel(key)}?`)) return;
+  delete kpiData[key];
+  kpiSave();
+  kpiRebuildMonthSel();
+  renderKpi();
+  showToast('🗑 Месяц удалён');
+}
+
+function kpiHandleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+      const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: 0 });
+      if (!json.length) { showToast('⚠️ Файл пустой'); return; }
+      kpiParseReport(json);
+    } catch(err) { showToast('⚠️ Ошибка: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function kpiParseReport(rows) {
+  const key = document.getElementById('kpiMonthSel').value;
+  if (!key) { showToast('⚠️ Сначала выберите месяц'); return; }
+
+  // Group by Промоутер.Код — только строки менеджера Эберзина (21763639)
+  const MY_MANAGER_CODE = '21763639';
+  const map = {};
+  rows.forEach(r => {
+    const mgrCode = String(r['Менеджер партнерки.Код'] || '').trim();
+    if (mgrCode !== MY_MANAGER_CODE) return;
+    const login = String(r['Промоутер.Код'] || '').trim();
+    const name  = String(r['Промоутер.Название'] || '').trim();
+    const bn    = String(r['Бизнес-направление.Код'] || '').trim();
+    if (!login || login === '0') return;
+    if (!map[login]) map[login] = { login, name, val: 0, valPositive: 0, adv: 0, accepted: 0, done: 0, bns: [] };
+    map[login].val      += parseFloat(r['Суммы.Валовая прибыль'] || 0);
+    const rowVal = parseFloat(r['Суммы.Валовая прибыль'] || 0);
+    if (rowVal > 0) map[login].valPositive += rowVal;
+    map[login].adv      += parseFloat(r['Суммы.Реклама'] || 0);
+    map[login].accepted += parseInt(r['Принято.Всего'] || 0);
+    map[login].done     += parseInt(r['Завершено.Заказ'] || 0);
+    if (bn && !map[login].bns.includes(bn)) map[login].bns.push(bn);
+  });
+
+  const salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
+  const parsed = Object.values(map).filter(r => r.val !== 0 || r.accepted > 0 || r.done > 0);
+
+  kpiData[key] = { rows: parsed, salary };
+  kpiSave();
+  renderKpi();
+  showToast(`✅ Загружено ${parsed.length} партнёров за ${kpiMonthLabel(key)}`);
+}
+
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  return Math.round(n).toLocaleString('ru-RU');
+}
+
+function renderKpi() {
+  const key = document.getElementById('kpiMonthSel').value;
+  const month = kpiData[key];
+  const salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
+
+  // Sync salary
+  if (month) month.salary = salary;
+
+  const summaryEl = document.getElementById('kpiSummary');
+  const tableEl   = document.getElementById('kpiTableWrap');
+
+  if (!month || !month.rows || !month.rows.length) {
+    summaryEl.innerHTML = '';
+    tableEl.innerHTML = `<div class="kpi-no-data">
+      <h3>Нет данных за ${key ? kpiMonthLabel(key) : 'выбранный месяц'}</h3>
+      <p>Загрузите отчёт из CRM (.xlsx)</p>
+    </div>`;
+    return;
+  }
+
+  const rows = month.rows;
+
+  // Enrich with partner info from partners array
+  const enriched = rows.map(r => {
+    const p = partners.find(x => String(x.login).trim() === String(r.login).trim());
+    const company = p ? p.company : r.name.replace(/«|»|,|\s*vs\s*\d+/g,'').trim();
+    const commPct = (p && p.commission != null && p.commission !== '' && !isNaN(p.commission))
+      ? Number(p.commission)
+      : 10;
+    const commAmt = r.valPositive > 0 ? r.valPositive * commPct / 100 : 0;
+    const foundInCRM = !!p;
+    return { ...r, company, commPct, commAmt, foundInCRM };
+  }).sort((a,b) => b.val - a.val);
+
+  // Totals
+  const totalVal  = enriched.reduce((s,r) => s + r.val, 0);
+  const totalComm = enriched.reduce((s,r) => s + r.commAmt, 0);
+  const totalAdv  = enriched.reduce((s,r) => s + r.adv, 0);
+  const myBonus   = Math.max(0, (totalVal - salary - totalComm) * 0.03);
+  const myTotal   = salary + myBonus;
+
+  // Summary cards
+  summaryEl.innerHTML = `
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Общий вал</div><div class="kpi-sum-value highlight">${fmt(totalVal)} ₽</div></div>
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Комиссии партнёров</div><div class="kpi-sum-value">${fmt(totalComm)} ₽</div></div>
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Реклама</div><div class="kpi-sum-value">${fmt(totalAdv)} ₽</div></div>
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Оклад</div><div class="kpi-sum-value">${fmt(salary)} ₽</div></div>
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Бонус (×3%)</div><div class="kpi-sum-value green">${fmt(myBonus)} ₽</div></div>
+    <div class="kpi-sum-card"><div class="kpi-sum-label">Итого зарплата</div><div class="kpi-sum-value gold">${fmt(myTotal)} ₽</div></div>
+  `;
+
+  // Table
+  const tRows = enriched.map(r => `
+    <tr>
+      <td>${r.company}</td>
+      <td><span class="cred-cell copy-cred" onclick="copyCred(this,'${r.login}')" title="Скопировать">${r.login}</span></td>
+      <td class="num">${r.accepted}</td>
+      <td class="num">${r.done}</td>
+      <td class="num">${fmt(r.val)} ₽</td>
+      <td class="num">${r.commPct}% ${!r.foundInCRM ? '<span title="Партнёр не найден в списке — используется 10% по умолчанию" style="color:#f59e0b;cursor:help">⚠️</span>' : ''}</td>
+      <td class="num">${fmt(r.commAmt)} ₽</td>
+      <td class="num">${fmt(r.adv)} ₽</td>
+    </tr>`).join('');
+
+  tableEl.innerHTML = `
+    <table class="kpi-table">
+      <thead><tr>
+        <th>Партнёр</th><th>Логин</th>
+        <th>Принято</th><th>Завершено</th>
+        <th>Вал</th><th>Комиссия %</th><th>Комиссия ₽</th><th>Реклама</th>
+      </tr></thead>
+      <tbody>${tRows}</tbody>
+      <tfoot><tr>
+        <td colspan="2">ИТОГО</td>
+        <td class="num">${enriched.reduce((s,r)=>s+r.accepted,0)}</td>
+        <td class="num">${enriched.reduce((s,r)=>s+r.done,0)}</td>
+        <td class="num">${fmt(totalVal)} ₽</td>
+        <td></td>
+        <td class="num">${fmt(totalComm)} ₽</td>
+        <td class="num">${fmt(totalAdv)} ₽</td>
+      </tr></tfoot>
+    </table>`;
 }
 
 // ─── HOTKEYS ───────────────────────────────────────────
@@ -2806,6 +3436,8 @@ loadCustom();
 loadColOrder();
 load();
 loadCustomTitle();
+// Pre-load kpiData from localStorage so val column shows on first render
+try { const s = localStorage.getItem('kpi_data_v1'); if (s) kpiData = JSON.parse(s); } catch(e) {}
 populateFilterSelects();
 populateBankSelect('Нет');
 buildColsPanel();
@@ -2854,6 +3486,12 @@ db.ref('/').once('value').then(snap => {
     document.getElementById('logoTitle').textContent = data.customTitle.toUpperCase() + ' — ПАРТНЁРЫ';
     document.getElementById('pageTitle').textContent = data.customTitle + ' — Партнёры';
     try { localStorage.setItem('custom_title', data.customTitle); } catch(e) {}
+  }
+
+  if (data.kpiData) {
+    kpiData = data.kpiData;
+    kpiSaveLocal();
+    changed = true;
   }
 
   if (changed) {
