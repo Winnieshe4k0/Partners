@@ -2271,7 +2271,7 @@ function renderCell(p, col) {
       if (!last) return `<td><div class="notes-cell">—</div></td>`;
       const dateStr = last.date ? `<span style="font-size:10px;color:var(--text-muted);margin-right:5px">${last.date.split('-').reverse().join('.')}</span>` : '';
       const countBadge = comments.length > 1 ? `<span style="font-size:10px;background:var(--klein-pale);color:var(--klein);border-radius:10px;padding:1px 6px;margin-left:4px;white-space:nowrap">+${comments.length - 1}</span>` : '';
-      return `<td><div class="notes-cell" title="${(last.text||'').replace(/"/g,'&quot;')}">${dateStr}${last.text||'—'}${countBadge}</div></td>`;
+      return `<td><div class="notes-cell" title="${(last.text||'').replace(/"/g,'&quot;')}">${last.text||'—'}${countBadge}</div></td>`;
     }
     case 'phone': return `<td>${phoneHtml(v)}</td>`;
     case 'email': {
