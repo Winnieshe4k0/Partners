@@ -1366,9 +1366,44 @@
   body.dark .kpi-table tbody tr:nth-child(even) { background: #181e30; }
   .kpi-table tbody tr:hover { background: var(--klein-ghost) !important; }
   .kpi-table td { padding: 10px 14px; font-size: 13px; white-space: nowrap; }
-  .kpi-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kpi-table td.num { text-align: right; font-variant-numeric: tabular-nums; width: 130px; }
+  .kpi-table th.num { text-align: right; }
   .kpi-table tfoot tr { background: var(--klein-dark); color: white; }
   .kpi-table tfoot td { padding: 10px 14px; font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 600; }
+  .kpi-table tfoot td.num { text-align: right; }
+
+  /* Stats modal */
+  #kpiStatsOverlay {
+    position: fixed; inset: 0;
+    background: rgba(0,15,40,.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #kpiStatsOverlay.open { display: flex; }
+  .kpi-stats-modal {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 820px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .25s ease;
+  }
+  body.dark .kpi-stats-modal { background: #141928; }
+  .kpi-stats-body { padding: 24px; display: flex; flex-direction: column; gap: 28px; }
+  .kpi-chart-title { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing:.04em; margin-bottom: 12px; }
+  .kpi-bar-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .kpi-bar-row { display: flex; align-items: center; gap: 10px; }
+  .kpi-bar-label { font-size: 12px; color: var(--text-muted); width: 80px; flex-shrink: 0; text-align: right; }
+  .kpi-bar-track { flex: 1; background: var(--klein-ghost); border-radius: 6px; height: 28px; overflow: hidden; position: relative; }
+  body.dark .kpi-bar-track { background: #1e2a4a; }
+  .kpi-bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: white; transition: width .4s ease; white-space: nowrap; min-width: 2px; }
+  .kpi-bar-val { font-size: 12px; font-weight: 600; color: var(--text); width: 110px; flex-shrink: 0; text-align: right; }
 
   .kpi-no-data {
     text-align: center;
@@ -1543,17 +1578,18 @@
     <div class="kpi-top-bar">
       <div>
         <label>Месяц</label><br>
-        <select class="kpi-month-select" id="kpiMonthSel" onchange="renderKpi()"></select>
+        <select class="kpi-month-select" id="kpiMonthSel" onchange="kpiMonthChanged()"></select>
       </div>
       <button class="btn-kpi-month-add" onclick="kpiAddMonth()">+ Месяц</button>
       <button class="btn-kpi-month-del" onclick="kpiDelMonth()">Удалить месяц</button>
       <div style="flex:1"></div>
+      <button class="btn-kpi-month-add" style="background:#7c3aed" onclick="openKpiStats()">📊 Статистика</button>
       <div>
         <label>Оклад, ₽</label><br>
-        <input type="number" class="kpi-salary-input" id="kpiSalary" value="70000" onchange="renderKpi()">
+        <input type="number" class="kpi-salary-input" id="kpiSalary" value="70000" onchange="kpiSalaryChanged()">
       </div>
       <div>
-        <label>Загрузить отчёт CRM</label><br>
+        <label>Загрузить начисления</label><br>
         <button class="btn-kpi-upload" onclick="kpiTriggerFile()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Загрузить .xlsx
@@ -1568,6 +1604,17 @@
     <!-- Table -->
     <div class="kpi-table-wrap" id="kpiTableWrap"></div>
 
+  </div>
+</div>
+
+<!-- KPI STATS MODAL -->
+<div id="kpiStatsOverlay">
+  <div class="kpi-stats-modal">
+    <div class="modal-header">
+      <div class="modal-title">📊 Общая статистика по месяцам</div>
+      <button class="modal-close" onclick="closeKpiStats()">×</button>
+    </div>
+    <div class="kpi-stats-body" id="kpiStatsBody"></div>
   </div>
 </div>
 
@@ -3187,6 +3234,88 @@ function kpiDiag() {
   document.getElementById('diagOverlay').style.display = 'flex';
 }
 
+function kpiMonthChanged() {
+  const key = document.getElementById('kpiMonthSel').value;
+  const month = kpiData[key];
+  // Load salary for this month
+  const salary = month?.salary || 70000;
+  document.getElementById('kpiSalary').value = salary;
+  renderKpi();
+}
+
+function kpiSalaryChanged() {
+  const key = document.getElementById('kpiMonthSel').value;
+  if (!key || !kpiData[key]) return;
+  kpiData[key].salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
+  kpiSave();
+  renderKpi();
+}
+
+function openKpiStats() {
+  const keys = Object.keys(kpiData).sort();
+  const body = document.getElementById('kpiStatsBody');
+
+  if (!keys.length) { showToast('⚠️ Нет данных для статистики'); return; }
+
+  // Collect monthly summaries
+  const months = keys.map(key => {
+    const m = kpiData[key];
+    const rows = m?.rows || [];
+    const salary = m?.salary || 70000;
+    const totalVal  = rows.reduce((s, r) => s + (r.val  || 0), 0);
+    const totalComm = rows.reduce((s, r) => s + (r.comm || 0), 0);
+    const bonus     = Math.max(0, (totalVal - salary - totalComm) * 0.03);
+    const total     = salary + bonus;
+    return { key, label: kpiMonthLabel(key), totalVal, totalComm, salary, bonus, total, hasData: rows.length > 0 };
+  }).filter(m => m.hasData);
+
+  if (!months.length) { showToast('⚠️ Нет месяцев с данными'); return; }
+
+  const maxVal   = Math.max(...months.map(m => m.totalVal));
+  const maxBonus = Math.max(...months.map(m => m.bonus));
+  const maxTotal = Math.max(...months.map(m => m.total));
+
+  function bars(data, maxV, color, field) {
+    return data.map(m => {
+      const pct = maxV > 0 ? Math.round((m[field] / maxV) * 100) : 0;
+      return `<div class="kpi-bar-row">
+        <div class="kpi-bar-label">${m.label.split(' ')[0]}<br><span style="font-size:10px">${m.label.split(' ')[1]||''}</span></div>
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill" style="width:${pct}%;background:${color}">
+            ${pct > 15 ? fmt(m[field]) + ' ₽' : ''}
+          </div>
+        </div>
+        <div class="kpi-bar-val">${pct <= 15 ? fmt(m[field]) + ' ₽' : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  body.innerHTML = `
+    <div>
+      <div class="kpi-chart-title">Вал по месяцам</div>
+      <div class="kpi-bar-wrap">${bars(months, maxVal, 'var(--klein)', 'totalVal')}</div>
+    </div>
+    <div>
+      <div class="kpi-chart-title">Бонус по месяцам</div>
+      <div class="kpi-bar-wrap">${bars(months, maxBonus, 'var(--success)', 'bonus')}</div>
+    </div>
+    <div>
+      <div class="kpi-chart-title">Итого зарплата по месяцам</div>
+      <div class="kpi-bar-wrap">${bars(months, maxTotal, '#7c3aed', 'total')}</div>
+    </div>
+    <div>
+      <div class="kpi-chart-title">Комиссии партнёров по месяцам</div>
+      <div class="kpi-bar-wrap">${bars(months, Math.max(...months.map(m=>m.totalComm)), 'var(--warning)', 'totalComm')}</div>
+    </div>
+  `;
+
+  document.getElementById('kpiStatsOverlay').classList.add('open');
+}
+
+function closeKpiStats() {
+  document.getElementById('kpiStatsOverlay').classList.remove('open');
+}
+
 // ─── TAB SWITCHING ─────────────────────────────────────
 let currentTab = 'partners';
 function switchTab(tab) {
@@ -3403,6 +3532,7 @@ function renderKpi() {
 // ─── HOTKEYS ───────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+    if (document.getElementById('kpiStatsOverlay').classList.contains('open')) { closeKpiStats(); return; }
     if (document.getElementById('confirmOverlay').classList.contains('open')) { confirmNo(); return; }
     if (document.getElementById('importOverlay').classList.contains('open')) { closeImportModal(); return; }
     if (document.getElementById('cardOverlay').classList.contains('open')) { closeCard(); return; }
@@ -3412,6 +3542,9 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ─── INIT ───────────────────────────────────────────────
+document.getElementById('kpiStatsOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeKpiStats();
+});
 document.getElementById('cardOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeCard();
 });
