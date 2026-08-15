@@ -3301,6 +3301,9 @@ function kpiParseReport(rows) {
     const rawLogin = String(r['Промоутер'] || '').trim();
     // Берём только строки где Промоутер — числовой логин
     if (!rawLogin || isNaN(rawLogin)) return;
+    // Исключаем итоговые строки сотрудника
+    const partnerName = String(r['Партнер'] || '').trim();
+    if (partnerName === 'Сотрудник' || partnerName === '') return;
 
     const login  = rawLogin;
     const name   = String(r['Партнер'] || '').replace(/«|»|\s*vs\s*\d+,,/g, '').trim();
@@ -3350,7 +3353,9 @@ function renderKpi() {
   // Обогащаем названиями из списка партнёров
   const enriched = rows.map(r => {
     const p = partners.find(x => String(x.login).trim() === String(r.login).trim());
-    const company = p ? p.company : r.name;
+    const company = p
+      ? p.company
+      : r.name.replace(/«|»|\s*vs\s*\d+,,?/g, '').trim() || r.login;
     return { ...r, company };
   }).sort((a, b) => b.val - a.val);
 
