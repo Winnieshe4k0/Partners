@@ -3296,28 +3296,34 @@ function kpiParseReport(rows) {
   const key = document.getElementById('kpiMonthSel').value;
   if (!key) { showToast('⚠️ Сначала выберите месяц'); return; }
 
-  // Group by Промоутер.Код — только строки менеджера Эберзина (21763639)
-  const MY_MANAGER_CODE = '21763639';
   const map = {};
   rows.forEach(r => {
-    const mgrCode = String(r['Менеджер партнерки.Код'] || '').trim();
-    if (mgrCode !== MY_MANAGER_CODE) return;
-    const login = String(r['Промоутер.Код'] || '').trim();
-    const name  = String(r['Промоутер.Название'] || '').trim();
-    const bn    = String(r['Бизнес-направление.Код'] || '').trim();
-    if (!login || login === '0') return;
-    if (!map[login]) map[login] = { login, name, val: 0, valPositive: 0, adv: 0, accepted: 0, done: 0, bns: [] };
-    map[login].val      += parseFloat(r['Суммы.Валовая прибыль'] || 0);
-    const rowVal = parseFloat(r['Суммы.Валовая прибыль'] || 0);
+    // Колонка "Промоутер" должна быть числовым кодом (логином)
+    const rawLogin = String(r['Промоутер'] || '').trim();
+    if (!rawLogin || isNaN(rawLogin) || rawLogin === '0') return;
+
+    const login   = rawLogin;
+    // Имя партнёра: извлекаем из колонки "Партнер" — убираем " vs XXXXXXXX,,"
+    const rawName = String(r['Партнер'] || '').trim();
+    const name    = rawName.replace(/«|»|\s*vs\s*\d+,,/g, '').trim();
+
+    const rowVal  = parseFloat(r['Вал']      || 0);
+    const rowAdv  = parseFloat(r['Реклама']  || 0);
+    const rowComm = parseFloat(r['Комиссия'] || 0);
+    const rowPct  = parseFloat(r['Процент '] || r['Процент'] || 0);
+
+    if (!map[login]) map[login] = { login, name, val: 0, valPositive: 0, adv: 0, accepted: 0, done: 0, commAmtRaw: 0, pct: 0 };
+    map[login].val         += rowVal;
+    map[login].adv         += rowAdv;
+    map[login].commAmtRaw  += rowComm;
     if (rowVal > 0) map[login].valPositive += rowVal;
-    map[login].adv      += parseFloat(r['Суммы.Реклама'] || 0);
-    map[login].accepted += parseInt(r['Принято.Всего'] || 0);
-    map[login].done     += parseInt(r['Завершено.Заказ'] || 0);
-    if (bn && !map[login].bns.includes(bn)) map[login].bns.push(bn);
+    if (rowPct > 0) map[login].pct = rowPct; // берём процент из файла
   });
 
   const salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
-  const parsed = Object.values(map).filter(r => r.val !== 0 || r.accepted > 0 || r.done > 0);
+  const parsed = Object.values(map).filter(r => r.val !== 0 || r.commAmtRaw > 0);
+
+  if (!parsed.length) { showToast('⚠️ Не найдено партнёров — проверьте формат файла'); return; }
 
   kpiData[key] = { rows: parsed, salary };
   kpiSave();
@@ -3355,11 +3361,11 @@ function renderKpi() {
   // Enrich with partner info from partners array
   const enriched = rows.map(r => {
     const p = partners.find(x => String(x.login).trim() === String(r.login).trim());
-    const company = p ? p.company : r.name.replace(/«|»|,|\s*vs\s*\d+/g,'').trim();
-    const commPct = (p && p.commission != null && p.commission !== '' && !isNaN(p.commission))
-      ? Number(p.commission)
-      : 10;
-    const commAmt = r.valPositive > 0 ? r.valPositive * commPct / 100 : 0;
+    const company = p ? p.company : r.name;
+    // Процент из файла, если есть — иначе из карточки партнёра
+    const commPct = r.pct > 0 ? Math.round(r.pct * 100) : (p && p.commission != null ? Number(p.commission) : 10);
+    // Сумма комиссии берётся из файла напрямую
+    const commAmt = r.commAmtRaw || 0;
     const foundInCRM = !!p;
     return { ...r, company, commPct, commAmt, foundInCRM };
   }).sort((a,b) => b.val - a.val);
