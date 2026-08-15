@@ -3298,33 +3298,24 @@ function kpiParseReport(rows) {
 
   const map = {};
   rows.forEach(r => {
-    // Колонка "Промоутер" должна быть числовым кодом (логином)
     const rawLogin = String(r['Промоутер'] || '').trim();
-    if (!rawLogin || isNaN(rawLogin) || rawLogin === '0') return;
+    // Берём только строки где Промоутер — числовой логин
+    if (!rawLogin || isNaN(rawLogin)) return;
 
-    const login   = rawLogin;
-    // Имя партнёра: извлекаем из колонки "Партнер" — убираем " vs XXXXXXXX,,"
-    const rawName = String(r['Партнер'] || '').trim();
-    const name    = rawName.replace(/«|»|\s*vs\s*\d+,,/g, '').trim();
+    const login  = rawLogin;
+    const name   = String(r['Партнер'] || '').replace(/«|»|\s*vs\s*\d+,,/g, '').trim();
+    const val    = parseFloat(r['Вал']      || 0);
+    const comm   = parseFloat(r['Комиссия'] || 0);
 
-    const rowVal  = parseFloat(r['Вал']      || 0);
-    const rowAdv  = parseFloat(r['Реклама']  || 0);
-    const rowComm = parseFloat(r['Комиссия'] || 0);
-    const rowPct  = parseFloat(r['Процент '] || r['Процент'] || 0);
-
-    if (!map[login]) map[login] = { login, name, val: 0, valPositive: 0, adv: 0, accepted: 0, done: 0, commAmtRaw: 0, pct: 0 };
-    map[login].val         += rowVal;
-    map[login].adv         += rowAdv;
-    map[login].commAmtRaw  += rowComm;
-    if (rowVal > 0) map[login].valPositive += rowVal;
-    if (rowPct > 0) map[login].pct = rowPct; // берём процент из файла
+    if (!map[login]) map[login] = { login, name, val: 0, comm: 0 };
+    map[login].val  += val;
+    map[login].comm += comm;
   });
 
+  const parsed = Object.values(map);
+  if (!parsed.length) { showToast('⚠️ Партнёры не найдены — проверьте формат файла'); return; }
+
   const salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
-  const parsed = Object.values(map).filter(r => r.val !== 0 || r.commAmtRaw > 0);
-
-  if (!parsed.length) { showToast('⚠️ Не найдено партнёров — проверьте формат файла'); return; }
-
   kpiData[key] = { rows: parsed, salary };
   kpiSave();
   renderKpi();
@@ -3340,8 +3331,6 @@ function renderKpi() {
   const key = document.getElementById('kpiMonthSel').value;
   const month = kpiData[key];
   const salary = parseFloat(document.getElementById('kpiSalary').value) || 70000;
-
-  // Sync salary
   if (month) month.salary = salary;
 
   const summaryEl = document.getElementById('kpiSummary');
@@ -3351,71 +3340,57 @@ function renderKpi() {
     summaryEl.innerHTML = '';
     tableEl.innerHTML = `<div class="kpi-no-data">
       <h3>Нет данных за ${key ? kpiMonthLabel(key) : 'выбранный месяц'}</h3>
-      <p>Загрузите отчёт из CRM (.xlsx)</p>
+      <p>Загрузите файл начислений (.xlsx)</p>
     </div>`;
     return;
   }
 
   const rows = month.rows;
 
-  // Enrich with partner info from partners array
+  // Обогащаем названиями из списка партнёров
   const enriched = rows.map(r => {
     const p = partners.find(x => String(x.login).trim() === String(r.login).trim());
     const company = p ? p.company : r.name;
-    // Процент из файла, если есть — иначе из карточки партнёра
-    const commPct = r.pct > 0 ? Math.round(r.pct * 100) : (p && p.commission != null ? Number(p.commission) : 10);
-    // Сумма комиссии берётся из файла напрямую
-    const commAmt = r.commAmtRaw || 0;
-    const foundInCRM = !!p;
-    return { ...r, company, commPct, commAmt, foundInCRM };
-  }).sort((a,b) => b.val - a.val);
+    return { ...r, company };
+  }).sort((a, b) => b.val - a.val);
 
-  // Totals
-  const totalVal  = enriched.reduce((s,r) => s + r.val, 0);
-  const totalComm = enriched.reduce((s,r) => s + r.commAmt, 0);
-  const totalAdv  = enriched.reduce((s,r) => s + r.adv, 0);
+  // Итоги
+  const totalVal  = enriched.reduce((s, r) => s + r.val,  0);
+  const totalComm = enriched.reduce((s, r) => s + r.comm, 0);
   const myBonus   = Math.max(0, (totalVal - salary - totalComm) * 0.03);
   const myTotal   = salary + myBonus;
 
-  // Summary cards
+  // Сводка
   summaryEl.innerHTML = `
     <div class="kpi-sum-card"><div class="kpi-sum-label">Общий вал</div><div class="kpi-sum-value highlight">${fmt(totalVal)} ₽</div></div>
     <div class="kpi-sum-card"><div class="kpi-sum-label">Комиссии партнёров</div><div class="kpi-sum-value">${fmt(totalComm)} ₽</div></div>
-    <div class="kpi-sum-card"><div class="kpi-sum-label">Реклама</div><div class="kpi-sum-value">${fmt(totalAdv)} ₽</div></div>
     <div class="kpi-sum-card"><div class="kpi-sum-label">Оклад</div><div class="kpi-sum-value">${fmt(salary)} ₽</div></div>
     <div class="kpi-sum-card"><div class="kpi-sum-label">Бонус (×3%)</div><div class="kpi-sum-value green">${fmt(myBonus)} ₽</div></div>
     <div class="kpi-sum-card"><div class="kpi-sum-label">Итого зарплата</div><div class="kpi-sum-value gold">${fmt(myTotal)} ₽</div></div>
   `;
 
-  // Table
+  // Таблица
   const tRows = enriched.map(r => `
     <tr>
       <td>${r.company}</td>
       <td><span class="cred-cell copy-cred" onclick="copyCred(this,'${r.login}')" title="Скопировать">${r.login}</span></td>
-      <td class="num">${r.accepted}</td>
-      <td class="num">${r.done}</td>
       <td class="num">${fmt(r.val)} ₽</td>
-      <td class="num">${r.commPct}% ${!r.foundInCRM ? '<span title="Партнёр не найден в списке — используется 10% по умолчанию" style="color:#f59e0b;cursor:help">⚠️</span>' : ''}</td>
-      <td class="num">${fmt(r.commAmt)} ₽</td>
-      <td class="num">${fmt(r.adv)} ₽</td>
+      <td class="num">${fmt(r.comm)} ₽</td>
     </tr>`).join('');
 
   tableEl.innerHTML = `
     <table class="kpi-table">
       <thead><tr>
-        <th>Партнёр</th><th>Логин</th>
-        <th>Принято</th><th>Завершено</th>
-        <th>Вал</th><th>Комиссия %</th><th>Комиссия ₽</th><th>Реклама</th>
+        <th>Партнёр</th>
+        <th>Логин</th>
+        <th>Вал</th>
+        <th>Комиссия</th>
       </tr></thead>
       <tbody>${tRows}</tbody>
       <tfoot><tr>
         <td colspan="2">ИТОГО</td>
-        <td class="num">${enriched.reduce((s,r)=>s+r.accepted,0)}</td>
-        <td class="num">${enriched.reduce((s,r)=>s+r.done,0)}</td>
         <td class="num">${fmt(totalVal)} ₽</td>
-        <td></td>
         <td class="num">${fmt(totalComm)} ₽</td>
-        <td class="num">${fmt(totalAdv)} ₽</td>
       </tr></tfoot>
     </table>`;
 }
