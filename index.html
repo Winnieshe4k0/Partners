@@ -1554,11 +1554,11 @@
       </div>
       <div>
         <label>Загрузить отчёт CRM</label><br>
-        <button class="btn-kpi-upload" onclick="document.getElementById('kpiFileInput').click()">
+        <button class="btn-kpi-upload" onclick="kpiTriggerFile()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Загрузить .xlsx
         </button>
-        <input type="file" id="kpiFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="kpiHandleFile(event)">
+        <input type="file" id="kpiFileInput" accept=".xlsx,.xls,.csv" style="position:fixed;top:-9999px;left:-9999px;opacity:0" onchange="kpiHandleFile(event)">
       </div>
     </div>
 
@@ -2012,9 +2012,9 @@ const COLS = [
   { key: 'city',        label: 'Город',           short: 'Город',     visible: true },
   { key: 'lpr',         label: 'ЛПР',             short: 'ЛПР',       visible: true },
   { key: 'phone',       label: 'Телефон',         short: 'Тел.',      visible: true },
-  { key: 'email',       label: 'Связь',           short: 'Связь',     visible: true },
+  { key: 'email',       label: 'Связь',           short: 'Связь',     visible: false },
   { key: 'login',       label: 'Логин',           short: 'Логин',     visible: true },
-  { key: 'pass',        label: 'Пароль',          short: 'Пароль',    visible: false },
+  { key: 'pass',        label: 'Пароль',          short: 'Пароль',    visible: true },
   { key: 'dedicated',   label: 'Выд. номер',      short: 'Выд.',      visible: false },
   { key: 'site',        label: 'Сайт',            short: 'Сайт',      visible: false },
   { key: 'lastcontact', label: 'Посл. контакт',   short: 'Контакт',   visible: true },
@@ -3268,6 +3268,12 @@ function kpiDelMonth() {
   kpiRebuildMonthSel();
   renderKpi();
   showToast('🗑 Месяц удалён');
+}
+
+function kpiTriggerFile() {
+  const inp = document.getElementById('kpiFileInput');
+  inp.value = '';
+  inp.click();
 }
 
 function kpiHandleFile(e) {
